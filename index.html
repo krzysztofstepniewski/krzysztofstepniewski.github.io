@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio | Krzysztof Stępniewski</title>
+    <link rel="preload" as="image" href="./tlo.webp">
+
+    <link rel="preload" as="image" href="./tlo1.webp" media="(min-width: 901px)">
+    <link rel="preload" as="image" href="./tlo2.webp" media="(min-width: 901px)">
     <style>
         /* --- BAZA I FONTY --- */
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;500;600;800&display=swap');
@@ -1500,8 +1504,8 @@
             Napisz wiadomość:
         </p>
 
-        <form id="contactForm" name="contact" method="POST" data-netlify="true" class="contact-form">
-            <input type="hidden" name="form-name" value="contact">
+        <form action="https://formspree.io/f/xovgrnzn" method="POST" class="contact-form">
+            
             <input type="text" id="inputName" name="name" placeholder="Twoje Imię" class="form-input" required>
             <input type="email" id="inputEmail" name="email" placeholder="Twój Email" class="form-input" required>
             <textarea id="inputMsg" name="message" placeholder="Treść wiadomości..." class="form-textarea" required></textarea>
@@ -1641,17 +1645,6 @@
                 heroTitle.style.opacity = ''; 
             }, 50);
         }
-
-        // --- OBSŁUGA FORMULARZA ---
-        const contactForm = document.getElementById('contactForm');
-        const successMessage = document.getElementById('successMessage');
-
-        // Netlify sam obsługuje formularz, ale jeśli chcesz użyć AJAX (żeby strona się nie przeładowała):
-        contactForm.addEventListener('submit', (e) => {
-            // Kod usunięty, żeby nie blokować standardowego wysyłania Netlify
-            // Jeśli chcesz standardowe przeładowanie do strony sukcesu Netlify - zostaw formularz bez JS
-            // Jeśli chcesz "po cichu" bez przeładowania, odkomentuj i użyj Fetch, ale standard jest pewniejszy.
-        });
 
         // --- FILTROWANIE (ROK I DOSTĘPNOŚĆ) + NOWA ANIMACJA ---
         

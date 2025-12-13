@@ -1,0 +1,2236 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Krzysztof Stępniewski</title>
+    <style>
+        /* --- BAZA I FONTY --- */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;500;600;800&display=swap');
+
+        :root {
+            /* --- PALETA JASNA (LIGHT THEME) --- */
+            --bg-color: #0a0a0a;       
+            --text-color: #ffffff;     
+            --accent-color: #ffffff;
+            
+            --collection-bg: #F2F4F8;   
+            --card-bg: #ffffff;         
+            --text-dark: #000000;       
+            
+            --nav-bg: rgba(255, 255, 255, 0.95); 
+            --input-bg: #ffffff;       
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            height: 100%;
+            /* Płynna zmiana koloru tła całej strony */
+            transition: background-color 0.8s ease; 
+        }
+
+        /* =========================================
+           1. EKRAN STARTOWY (HERO) - MOBILE FIRST
+           ========================================= */
+        .hero-section {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            padding: 20px; box-sizing: border-box; z-index: 10;
+            background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('./tlo.webp'); 
+            background-size: cover; background-position: center;
+            transition: opacity 0.8s ease, visibility 0.8s; 
+        }
+        
+        /* FIX: NATYCHMIASTOWE UKRYCIE HERO (bez mignięcia napisu) */
+        .hero-section.hidden-completely { opacity: 0; visibility: hidden; pointer-events: none; transition: none !important; }
+        
+        h1 { 
+            font-size: 12vw; line-height: 1.1; font-weight: 500; 
+            margin: 0 0 35px 0; text-transform: uppercase; 
+            color: var(--text-color); 
+            transition: opacity 0.5s ease, transform 0.5s ease; opacity: 1; transform: scale(1); 
+        }
+        h1.faded-out { opacity: 0; transform: scale(0.95); }
+        
+        .hamburger-btn { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 10px; padding: 10px; z-index: 200; transition: opacity 0.3s; }
+        .hamburger-btn.hide { opacity: 0; pointer-events: none; }
+        .hamburger-btn span { width: 55px; height: 3px; background-color: white; display: block; transition: 0.3s; }
+        @media (hover: hover) { .hamburger-btn:hover { opacity: 0.7; } }
+
+        /* --- PRZEŁĄCZNIK JĘZYKA --- */
+        .lang-switch {
+            position: absolute; top: 30px; right: 30px; z-index: 300;
+            display: flex; gap: 5px; font-size: 20px; font-weight: 600; letter-spacing: 1px; color: white;
+        }
+        .lang-btn {
+            background: none; border: none; color: rgba(255, 255, 255, 0.6);
+            cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px; padding: 0; transition: color 0.3s;
+        }
+        .lang-btn:hover { color: white; }
+        .lang-btn.active { color: white; text-decoration: underline; text-underline-offset: 6px; }
+
+        /* =========================================
+           2. PEŁNOEKRANOWE MENU
+           ========================================= */
+        .full-screen-menu { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
+            background: rgba(0,0,0,0.1); backdrop-filter: blur(6px); z-index: 100; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            opacity: 0; visibility: hidden; transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.6s; 
+        }
+        .full-screen-menu.active { opacity: 1; visibility: visible; }
+        
+        .menu-links { display: flex; flex-direction: column; gap: 35px; text-align: center; transform: translateY(20px); transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+        .full-screen-menu.active .menu-links { transform: translateY(0); }
+        
+        .menu-links button, .menu-links a { 
+            background: none; border: none; text-decoration: none; color: white; 
+            font-weight: 500; font-size: 28px; text-transform: uppercase;  
+            cursor: pointer; transition: color 0.3s, transform 0.3s; letter-spacing: 1px; 
+        }
+        @media (hover: hover) { .menu-links button:hover, .menu-links a:hover { transform: scale(1.05); text-decoration: underline; text-underline-offset: 8px; } }
+        .close-menu { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); font-size: 40px; color: white; cursor: pointer; padding: 20px; }
+
+        /* =========================================
+           3. PASEK NAWIGACJI (STAŁY W SEKCJI)
+           ========================================= */
+        .gallery-header {
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+            display: grid; grid-template-columns: 80px 1fr 80px; align-items: center;
+            padding: 0 20px; box-sizing: border-box;
+            background-color: var(--nav-bg); backdrop-filter: blur(10px); z-index: 50;
+            border-bottom: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transform: translateY(-100%); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        .gallery-header.visible { transform: translateY(0); }
+
+        .header-btn {
+            background: none; border: none; color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 1px;
+            text-transform: uppercase; cursor: pointer; text-align: left; padding: 10px 0;
+        }
+
+        .header-title {
+            text-align: center; font-family: 'Montserrat', sans-serif;
+            font-weight: 800; font-size: 16px; letter-spacing: 2px;
+            color: var(--text-dark);
+        }
+
+        /* Wybór Roku */
+        .year-dropdown-container { position: relative; text-align: right; }
+        .year-trigger {
+            background: none; border: none; color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px;
+            cursor: pointer; padding: 10px 0; display: flex; align-items: center; justify-content: flex-end; gap: 5px;
+        }
+        .year-trigger:hover { opacity: 0.7; }
+
+        .year-dropdown-menu {
+            position: absolute; top: 100%; right: 0;
+            background-color: white; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-width: 100px;
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: all 0.3s ease; overflow: hidden;
+        }
+        .year-dropdown-menu.open { opacity: 1; visibility: visible; transform: translateY(10px); }
+
+        .year-option {
+            display: block; width: 100%; padding: 12px 15px; text-align: center;
+            background: none; border: none; color: #666;
+            font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 14px;
+            cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .year-option:last-child { border-bottom: none; }
+        .year-option:hover { background-color: #f5f5f5; color: black; }
+        .year-option.selected { color: black; font-weight: 800; background-color: #f0f0f0; }
+
+
+        /* =========================================
+           PREMIUM ANIMACJE PRZEJŚĆ
+           ========================================= */
+        
+        /* 1. Wejście całych sekcji */
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(40px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .premium-fade-in {
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* 2. NOWOŚĆ: Wejście poszczególnych obrazów przy filtrowaniu */
+        @keyframes fadeInUpFilter {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Klasa dodawana dynamicznie do kart przy filtrowaniu */
+        .filter-anim {
+            /* Animation-duration: 0.6s, Animation-fill-mode: forwards */
+            animation: fadeInUpFilter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0; /* Ważne: Startujemy z opacity 0, animacja to zmieni na 1 */
+        }
+
+        /* Główne sekcje - domyślnie ukryte */
+        .collection-section, .contact-section, .about-section {
+            display: none; opacity: 0; 
+        }
+        
+        /* TU BYŁA ZMIANA - dodano flex i flex-direction aby stopka była zawsze na dole */
+        .collection-section.active, 
+        .contact-section.active, 
+        .about-section.active { 
+            display: flex; 
+            flex-direction: column;
+        }
+        
+        /* =========================================
+           4. SEKCJA KOLEKCJA (OBRAZY)
+           ========================================= */
+        .collection-section { min-height: 100vh; padding: 90px 20px 60px 20px; box-sizing: border-box; background-color: var(--collection-bg); }
+        
+        /* FILTRY */
+        .filter-buttons-container {
+            display: flex; justify-content: center; gap: 20px;
+            margin-bottom: 25px; margin-top: 5px;
+        }
+
+        .filter-btn {
+            background-color: white; color: var(--text-dark);
+            border: 1px solid var(--text-dark); padding: 12px 30px;
+            font-family: 'Montserrat', sans-serif; font-weight: 600;
+            font-size: 12px; letter-spacing: 1px; border-radius: 4px;
+            cursor: pointer; transition: all 0.3s ease; text-transform: uppercase;
+        }
+        .filter-btn:hover { opacity: 0.8; }
+        .filter-btn.active {
+            background-color: var(--text-dark); color: white;
+            box-shadow: 0 4px 15px rgba(0,20,60, 0.2);
+        }
+
+        .vertical-scroll-container { display: flex; flex-direction: column; gap: 60px; max-width: 600px; margin: 0 auto; width: 100%; }
+        
+        .art-card { 
+            width: 100%; background: var(--card-bg); box-shadow: 0 20px 50px rgba(0,0,0,0.08); 
+            overflow: hidden; border-radius: 4px; display: block; 
+        }
+        .art-card.hidden-card { display: none; }
+        
+        /* Slider */
+        .slider-container { position: relative; width: 100%; aspect-ratio: 4/5; background: #eee; touch-action: pan-y; }
+        .slide-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease; cursor: pointer; }
+        .slide-img.active { opacity: 1; z-index: 1; }
+        
+        /* Slider Arrow */
+        .slider-arrow { 
+            position: absolute; top: 0; bottom: 0; width: 20%; height: 100%;
+            background: transparent; border: none; cursor: pointer; z-index: 10; 
+            outline: none; -webkit-tap-highlight-color: transparent;
+        }
+        .slider-arrow-prev { left: 0; }
+        .slider-arrow-next { right: 0; }
+        .slider-arrow-prev:hover { cursor: w-resize; }
+        .slider-arrow-next:hover { cursor: e-resize; }
+
+        .static-img { width: 100%; height: auto; display: block; }
+
+        .art-card-info { padding: 25px; color: var(--text-dark); text-align: left; border-top: 1px solid #eee; }
+        .art-card-info div:first-child { font-weight: 600; margin-bottom: 8px; font-size: 18px; text-transform: uppercase; }
+        .art-card-info div:last-child { font-weight: 400; opacity: 0.7; font-size: 14px; }
+
+        /* =========================================
+           5. SEKCJA KONTAKT
+           ========================================= */
+        .contact-section {
+            min-height: 100vh; padding: 120px 20px;
+            box-sizing: border-box; 
+            background-color: var(--collection-bg); color: var(--text-dark);
+            flex-direction: column; align-items: center; text-align: center;
+        }
+
+        .contact-top-info {
+            display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px; align-items: center;
+        }
+
+        .phone-link {
+            color: var(--text-dark); text-decoration: none; 
+            font-size: 24px; font-weight: 600; letter-spacing: 1px;
+            transition: opacity 0.3s;
+        }
+        .phone-link:hover { opacity: 0.7; }
+
+        .insta-btn {
+            display: inline-block; padding: 14px 35px; background-color: var(--text-dark); 
+            color: white; border: none; border-radius: 50px; text-decoration: none; 
+            font-weight: 700; font-size: 13px; letter-spacing: 1.5px;
+            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,20,60, 0.2);
+        }
+        .insta-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,20,60, 0.3); opacity: 0.95; }
+
+        .contact-form { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 20px; }
+        
+        .form-input, .form-textarea {
+            width: 100%; padding: 15px; background: white; border: 1px solid #ccc;
+            color: var(--text-dark); font-family: 'Montserrat', sans-serif; font-size: 16px; border-radius: 4px; box-sizing: border-box;
+        }
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--text-dark); }
+        .form-textarea { resize: vertical; min-height: 150px; }
+        
+        .send-btn {
+            padding: 15px 30px; background: var(--text-dark); color: white; border: none;
+            font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 16px;
+            cursor: pointer; text-transform: uppercase; transition: 0.3s; border-radius: 4px;
+        }
+        .send-btn:hover { opacity: 0.9; transform: scale(1.02); }
+
+        .success-message {
+            display: none; background: #d4edda; border: 1px solid #c3e6cb;
+            color: #155724; padding: 20px; border-radius: 4px; margin-top: 20px;
+        }
+
+        /* =========================================
+           5.7 SEKCJA O MNIE
+           ========================================= */
+        .about-section {
+            min-height: 100vh; padding: 100px 20px;
+            box-sizing: border-box;
+            background-color: var(--collection-bg); color: var(--text-dark);
+            flex-direction: column; align-items: center;
+        }
+
+        .about-container {
+            max-width: 1000px; width: 100%;
+            display: flex; flex-direction: column; gap: 15px; margin-top: 20px;
+        }
+
+        .about-img {
+            width: 100%; height: auto; border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); object-fit: cover;
+        }
+
+        .about-text-content {
+            text-align: justify; font-size: 16px; line-height: 1.8; color: var(--text-dark);
+        }
+        .about-text-content p { margin-bottom: 20px; opacity: 0.9; }
+
+        /* =========================================
+           6. LIGHTBOX
+           ========================================= */
+        .lightbox { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); z-index: 1000; display: none; 
+            justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s ease;
+            touch-action: none; overscroll-behavior: contain;
+        }
+        .lightbox.active { display: flex; opacity: 1; }
+        
+        .lightbox-content { 
+            position: relative; 
+            max-width: 90vw; 
+            max-height: 85vh; 
+        }
+
+        .lightbox-img { 
+            width: 100%; height: 100%; object-fit: contain; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+            opacity: 0; transition: opacity 0.4s ease-in-out; 
+            display: block;
+        }
+        .lightbox-img.loaded { opacity: 1; }
+
+        /* --- STREFY KLIKNIĘCIA NA ZDJĘCIU --- */
+        .lb-nav-zone {
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 50%;
+            height: 100%;
+            z-index: 1025;
+            background: transparent;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .prev-zone { left: 0; cursor: w-resize; }
+        .next-zone { right: 0; cursor: e-resize; }
+        
+        /* Strzałki ZEWNĘTRZNE w Lightboxie - DOMYŚLNIE UKRYTE (Mobile First) */
+        .lb-arrow { 
+            display: none; 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            width: auto; 
+            height: auto; 
+            background: transparent; 
+            border: none; 
+            cursor: pointer; 
+            z-index: 1030; 
+            outline: none; 
+            
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 200; 
+            font-size: 60px; 
+            padding: 20px; 
+            transition: color 0.3s ease, opacity 0.3s ease, transform 0.2s;
+        }
+
+        .lb-arrow:hover { 
+            color: #ffffff; 
+            opacity: 1;
+            transform: translateY(-50%) scale(1.1); 
+        }
+
+        /* Pozycjonowanie strzałek zewnętrznych */
+        .lb-prev { left: 200px; } 
+        .lb-next { right: 200px; }
+
+        .lb-close { position: absolute; top: 20px; right: 30px; color: white; font-size: 30px; cursor: pointer; z-index: 1040; font-weight: 300; transition: color 0.3s; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8)); }
+
+        .lb-indicators {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 12px; z-index: 1020;
+        }
+        .lb-dash {
+            width: 30px; height: 3px; background-color: #ffffff;
+            opacity: 0.3; border-radius: 2px; transition: opacity 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        .lb-dash.active { opacity: 1; box-shadow: 0 0 5px rgba(255,255,255,0.8); }
+
+        /* --- STOPKA (FOOTER) --- */
+        .site-footer {
+            text-align: center;
+            padding: 40px 20px 20px;
+            font-size: 11px;
+            opacity: 0.5;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: auto;
+        }
+
+        /* =========================================
+           7. STYLE TYLKO DLA KOMPUTERA (DESKTOP)
+           ========================================= */
+        @media (min-width: 901px) {
+            
+            /* --- POKAZUJEMY STRZAŁKI TYLKO NA DESKTOPIE --- */
+            .lb-arrow {
+                display: block;
+            }
+
+            /* --- 1. TŁO (3 ZDJĘCIA + PRZYCIEMNIENIE) --- */
+            .hero-section {
+                background-image: 
+                    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                    url('./tlo.webp'), 
+                    url('./tlo1.webp'), 
+                    url('./tlo2.webp') !important;
+
+                background-position: 
+                    center,
+                    left top, 
+                    center top, 
+                    right top !important;
+
+                background-size: 
+                    cover,
+                    33.34% 100%, 
+                    33.34% 100%, 
+                    33.34% 100% !important;
+
+                background-repeat: no-repeat !important;
+            }
+
+            /* --- 2. POWIĘKSZONE NAPISY --- */
+            h1 { 
+                font-size: 80px; /* Duże imię i nazwisko */
+                margin-bottom: 50px; 
+            }
+
+            .lang-switch {
+                top: 50px; 
+                right: 60px; 
+            }
+            .lang-btn {
+                font-size: 20px; /* Większe PL / ENG */
+            }
+
+            /* --- 3. NAPRAWA LIGHTBOXA --- */
+            .lightbox-content {
+                width: auto !important;
+                height: auto !important;
+                max-width: 100% !important;
+                max-height: 100% !important;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .lightbox-img {
+                width: auto !important;
+                height: auto !important;
+                max-width: 90vw !important;
+                max-height: 90vh !important; 
+                object-fit: contain !important;
+            }
+            
+            .lb-nav-zone {
+                width: 40%;
+                height: 100%;
+            }
+
+            /* -- POZOSTAŁE STYLE DESKTOPOWE -- */
+            .vertical-scroll-container { 
+                display: grid; 
+                grid-template-columns: repeat(3, 1fr); 
+                gap: 40px; 
+                max-width: 1400px; 
+            }
+            
+            .art-card {
+                margin-bottom: 0; 
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .art-card:hover {
+                transform: translateY(-5px); 
+                box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+            }
+
+            .gallery-header {
+                padding: 0 40px;
+                max-width: 100%;
+            }
+
+            .about-container { 
+                flex-direction: row; 
+                align-items: flex-start; 
+                gap: 60px;
+                max-width: 1200px;
+            }
+            .about-img-wrapper { 
+                flex: 1; 
+                position: sticky; top: 100px; 
+            }
+            .about-text-content { 
+                flex: 1.2; 
+                padding-left: 0; 
+                text-align: justify; 
+            }
+            .about-text-content p {
+                font-size: 18px; 
+                line-height: 1.7;
+            }
+
+            .contact-section {
+                justify-content: center;
+                padding-top: 100px;
+            }
+            .contact-form {
+                background-color: white;
+                padding: 50px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.05); 
+                border-radius: 8px;
+            }
+            
+            .form-input, .form-textarea, .send-btn {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero-section" id="heroSection">
+        <h1 id="heroTitle">Krzysztof<br>Stępniewski</h1>
+        <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu(true)"><span></span><span></span><span></span></button>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLanguage('pl')">PL</button>
+            /
+            <button class="lang-btn" onclick="setLanguage('en')">ENG</button>
+        </div>
+    </header>
+
+    <div class="full-screen-menu" id="mainMenu">
+        <div class="close-menu" onclick="toggleMenu(false)">✕</div>
+        <nav class="menu-links">
+            <button onclick="showCollection()" data-lang="menu_paintings">OBRAZY</button>
+            <button onclick="showAbout()" data-lang="menu_about">BIO</button>
+            <button onclick="showContact()" data-lang="menu_contact">KONTAKT</button>
+        </nav>
+    </div>
+
+    <div class="gallery-header" id="galleryHeader">
+        <button class="header-btn" onclick="goBackToMenu()" data-lang="back_menu">← MENU</button>
+        <div class="header-title" data-lang="menu_paintings">OBRAZY</div>
+        <div class="year-dropdown-container">
+            <button class="year-trigger" onclick="toggleYearDropdown()">
+                <span id="currentYearDisplay">2025</span> <span style="font-size: 10px; margin-left: 5px;">▼</span>
+            </button>
+            <div class="year-dropdown-menu" id="yearDropdown">
+                <button class="year-option selected" onclick="selectYear('2025')">2025</button>
+                <button class="year-option" onclick="selectYear('2024')">2024</button>
+                <button class="year-option" onclick="selectYear('2023')">2023</button>
+                <button class="year-option" onclick="selectYear('2022')">2022</button>
+                <button class="year-option" onclick="selectYear('2021')">2021</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="gallery-header" id="aboutHeader">
+        <button class="header-btn" onclick="goBackToMenu()" data-lang="back_menu">← MENU</button>
+        <div class="header-title" data-lang="menu_about">BIO</div>
+        <div style="width: 80px;"></div> </div>
+
+    <div class="gallery-header" id="contactHeader">
+        <button class="header-btn" onclick="goBackToMenu()" data-lang="back_menu">← MENU</button>
+        <div class="header-title" data-lang="menu_contact">KONTAKT</div>
+        <div style="width: 80px;"></div> </div>
+
+    <section class="collection-section" id="collection2025">
+        <div class="filter-buttons-container">
+            <button class="filter-btn active" id="btnAll" onclick="filterArt('all')" data-lang="filter_all">WSZYSTKIE</button>
+            <button class="filter-btn" id="btnAvailable" onclick="filterArt('available')" data-lang="filter_available">DOSTĘPNE</button>
+        </div>
+
+        <div class="vertical-scroll-container">
+
+            <div class="art-card slider-card" id="doll-card" data-year="2025" data-available="true">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./barbie.1.webp" class="slide-img active" onclick="openLightbox(this)" fetchpriority="high">
+                    <img src="./b1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./b2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./b3.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./b4.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./b5.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./barbie.1.webp, ./b1.webp, ./b2.webp, ./b3.webp, ./b4.webp, ./b5.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_doll">LALKA</div>
+                    <div data-lang="info_doll">30x40 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="krzeslo-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./krzeslo1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./k2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./k3.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./k4.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./k5.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./k6.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./krzeslo1.webp, ./k2.webp, ./k3.webp, ./k4.webp, ./k5.webp, ./k6.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_coldhands">Zimne ręce</div>
+                    <div data-lang="info_coldhands">50x70 cm, olej na płótnie</div>
+                </div>
+            </div>
+            
+            <div class="art-card slider-card" id="TWARZ-card" data-year="2025" data-available="true">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./TWARZ.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./t1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./t2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./t3.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./t4.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./t5.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./TWARZ.webp, ./t1.webp, ./t2.webp, ./t3.webp, ./t4.webp, ./t5.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_portrait_xx">PORTRET XX</div>
+                    <div data-lang="info_portrait_xx">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+            
+            <div class="art-card slider-card" id="reka-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./reka.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./r1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./r2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./r3.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./r4.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./r5.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./reka.webp, ./r1.webp, ./r2.webp, ./r3.webp, ./r4.webp, ./r5.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_body_xvii">CIAŁO XVII</div>
+                    <div data-lang="info_body_xvii">30x40 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="portret-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./portret.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./p1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./p2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./p3.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./p4.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./p5.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./portret.webp, ./p1.webp, ./p2.webp, ./p3.webp, ./p4.webp, ./p5.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_portrait_xix">PORTRET XIX</div>
+                    <div data-lang="info_portrait_xix">30x40 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="brzuch-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./brzuc.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./brzuch1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./brzuch2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./brzuc.webp, ./brzuch1.webp, ./brzuch2.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_body_xvi">CIAŁO XVI</div>
+                    <div data-lang="info_body_xvi">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="napiecie-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./napiecie.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./n1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./n2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./n3.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./n4.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./napiecie.webp, ./n1.webp, ./n2.webp, ./n3.webp, ./n4.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_tension">NAPIĘCIE</div>
+                    <div data-lang="info_tension">40x50 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="nasycenie-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./nasycenie.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./nasycenie1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./nasycenie.webp, ./nasycenie1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_portrait_xviii">PORTRET XVIII</div>
+                    <div data-lang="info_portrait_xviii">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="XVII-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./XVII.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./XVII1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./XVII.webp, ./XVII1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_portrait_xvii">PORTRET XVII</div>
+                    <div data-lang="info_portrait_xvii">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="XVI-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./XVI.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./XVI1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./XVI.webp, ./XVI1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_portrait_xvi">PORTRET XVI</div>
+                    <div data-lang="info_portrait_xvi">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="XV-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./XV.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./XV1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./XV.webp, ./XV1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_portrait_xv">PORTRET XV</div>
+                    <div data-lang="info_portrait_xv">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="XIV-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./XIV.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./XIV1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./XIV.webp, ./XIV1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_portrait_xiv">PORTRET XIV</div>
+                    <div data-lang="info_portrait_xiv">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="zloty-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./zloty.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./zloty1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./zloty.webp, ./zloty1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_sunkissed">MUŚNIĘTY SŁOŃCEM</div>
+                    <div data-lang="info_sunkissed">40x60 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="zachod-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./zachod.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./zachod1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./zachod2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./zachod3.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./zachod4.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./zachod5.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./zachod.webp, ./zachod1.webp, ./zachod2.webp, ./zachod3.webp, ./zachod4.webp, ./zachod5.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_sunset">ZACHÓD SŁOŃCA</div>
+                    <div data-lang="info_sunset">50x50 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="pokoj-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./pokoj.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./pokoj1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./pokoj2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./pokoj3.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./pokoj4.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./pokoj5.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./pokoj.webp, ./pokoj1.webp, ./pokoj2.webp, ./pokoj3.webp, ./pokoj4.webp, ./pokoj5.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_blueroom">NIEBIESKI POKÓJ</div>
+                    <div data-lang="info_blueroom">100x120 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="dlonie-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./dlonie.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./dlonie1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./dlonie2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./dlonie3.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./dlonie.webp, ./dlonie1.webp, ./dlonie2.webp, ./dlonie3.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_takehands">ZABIERZ RĘCE</div>
+                    <div data-lang="info_takehands">46x40 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="bz-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./bz.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./bz1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./bz2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./bz.webp, ./bz1.webp, ./bz2.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_untitled_bz">BEZ NAZWY</div>
+                    <div data-lang="info_untitled_bz">30x40 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="tz-card" data-year="2025">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./tz.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./tz1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./tz2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./tz.webp, ./tz1.webp, ./tz2.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_portrait_xiii">PORTRET XIII</div>
+                    <div data-lang="info_portrait_xiii">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="zadza-card" data-year="2024">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./zadza.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./zadza1.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./zadza2.webp" class="slide-img" onclick="openLightbox(this)">
+                    <img src="./zadza3.webp" class="slide-img" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./zadza.webp, ./zadza1.webp, ./zadza2.webp, ./zadza3.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_lust">ŻĄDZA</div>
+                    <div data-lang="info_lust">27x35 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="XII-card" data-year="2024">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./XII.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./XII.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_portrait_xii">PORTRET XII</div>
+                    <div data-lang="info_portrait_xii">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="XI-card" data-year="2024">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./XI.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./XI.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_portrait_xi">PORTRET XI</div>
+                    <div data-lang="info_portrait_xi">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="X-card" data-year="2024">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./X.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./X.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_portrait_x">PORTRET X</div>
+                    <div data-lang="info_portrait_x">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="bn-card" data-year="2024">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./bn.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./bn1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./bn2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./bn3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./bn4.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./bn.webp, ./bn1.webp, ./bn2.webp, ./bn3.webp, ./bn4.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_untitled_bn">BEZ NAZWY</div>
+                    <div data-lang="info_untitled_bn">50x50 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="boy-card" data-year="2024">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./boy.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./boy.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_blueboy">NIEBIESKI CHŁOPAK</div>
+                    <div data-lang="info_blueboy">40x50 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="rozmowa-card" data-year="2024">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./rozmowa.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./rozmowa1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./rozmowa2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./rozmowa3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./rozmowa4.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./rozmowa.webp, ./rozmowa1.webp, ./rozmowa2.webp, ./rozmowa3.webp, ./rozmowa4.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_conversation">ROZMOWA</div>
+                    <div data-lang="info_conversation">120x100 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="oczy-card" data-year="2024" data-available="true">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./oczy.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./oczy1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./oczy2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./oczy3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./oczy4.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./oczy.webp, ./oczy1.webp, ./oczy2.webp, ./oczy3.webp, ./oczy4.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_blueeyes">NIEBIESKIE OCZY</div>
+                    <div data-lang="info_blueeyes">120x70 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="MARYNA-card" data-year="2024">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./MARYNA.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./MARYNA1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./MARYNA2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./MARYNA3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./MARYNA.webp, ./MARYNA1.webp, ./MARYNA2.webp, ./MARYNA3.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_ultramarine">ULTRAMARYNA I CYNOBER</div>
+                    <div data-lang="info_ultramarine">120x70 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="cenzor-card" data-year="2024">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./cenzor.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cenzor1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cenzor2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cenzor3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./cenzor4.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./cenzor5.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./cenzor6.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./cenzor7.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./cenzor.webp, ./cenzor1.webp, ./cenzor2.webp, ./cenzor3.webp, ./cenzor4.webp, ./cenzor5.webp, ./cenzor6.webp, ./cenzor7.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_untitled_c">BEZ NAZWY</div>
+                    <div data-lang="info_untitled_c">120x60 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="m-card" data-year="2023">
+               <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./m.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./m1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./m2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./m3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./m4.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./m5.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./m6.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./m7.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./m8.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./m.webp, ./m1.webp, ./m2.webp, ./m3.webp, ./m4.webp, ./m5.webp, ./m6.webp, ./m7.webp, ./m7.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_twowomen">DWIE KOBIETY</div>
+                    <div data-lang="info_twowomen">150x150 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="kosz-card" data-year="2023">
+               <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./kosz.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./kosz1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./kosz2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./kosz3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./kosz4.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./kosz5.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./kosz6.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./kosz.webp, ./kosz1.webp, ./kosz2.webp, ./kosz.webp, ./kosz4.webp, ./kosz5.webp, ./kosz6.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_redshirt">CZERWONA KOSZULA</div>
+                    <div data-lang="info_redshirt">92x65 cm, olej na płótnie</div>
+                </div>
+            </div>
+            
+            <div class="art-card slider-card" id="przeb-card" data-year="2023">
+               <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./przeb.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./przeb1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./przeb2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./przeb3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./przeb4.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./przeb5.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./przeb.webp, ./przeb1.webp, ./przeb2.webp, ./przeb3.webp, ./przeb4.webp, ./przeb5.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_awakening">PRZEBUDZENIE</div>
+                    <div data-lang="info_awakening">100x100 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="algos-card" data-year="2023">
+               <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./algos.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./algos.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_algos">ALGOS</div>
+                    <div data-lang="info_algos">100x100 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="sen-card" data-year="2023">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./sen.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./sen1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./sen2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./sen3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./sen4.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./sen.webp, ./sen1.webp, ./sen2.webp, ./sen3.webp, ./sen4.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_dream">SEN</div>
+                    <div data-lang="info_dream">80x90 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="tin-card" data-year="2023">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./tin.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./tin1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./tin2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./tin3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./tin.webp, ./tin1.webp, ./tin2.webp, ./tin3.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_tinman">TIN MAN</div>
+                    <div data-lang="info_tinman">40x50 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="czerw-card" data-year="2023">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./czerw.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./czerw1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./czerw2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./czerw.webp, ./czerw1.webp, ./czerw2.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_czerwonareka">CZERWONA RĘKA</div>
+                    <div data-lang="info_czerwonareka">60x90 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="spet-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./spet.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./spet1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./spet2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./spet3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./spet.webp, ./spet1.webp, ./spet2.webp, ./spet3.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_spetryfikowany">SPETRYFIKOWANY</div>
+                    <div data-lang="info_spetryfikowany">90x80 cm, olej na płótnie</div>
+                </div>
+            </div>
+            
+            <div class="art-card slider-card" id="nn-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./nn.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./nn1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./nn.webp, ./nn1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_nn_2022">BEZ NAZWY</div>
+                    <div data-lang="info_nn_2022">80x90 cm, olej na płótnie</div>
+                </div>
+            </div>
+            
+            <div class="art-card slider-card" id="cialoXII-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./cialoXII.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cialoXII1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./cialoXII.webp, ./cialoXII1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_cialo_xii">CIAŁO XII</div>
+                    <div data-lang="info_cialo_xii">20x20 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="cialoXI-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./cialoXI.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cialoXI1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./cialoXI.webp, ./cialoXI1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_cialo_xi">CIAŁO XI</div>
+                    <div data-lang="info_cialo_xi">20x20 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="cialoIX-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./cialoIX.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cialoIX1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./cialoIX.webp, ./cialoIX1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_cialo_ix">CIAŁO IX</div>
+                    <div data-lang="info_cialo_ix">25x25 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="cialoVIII-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./cialoVIII.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cialoVIII1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./cialoVIII.webp, ./cialoVIII1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_cialo_viii">CIAŁO VIII</div>
+                    <div data-lang="info_cialo_viii">25x25 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="cialoVII-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./cialoVII.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cialoVI1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./cialoVII.webp, ./cialoVII1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_cialo_vii">CIAŁO VII</div>
+                    <div data-lang="info_cialo_vii">25x25 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="cialoVI-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./cialoVI.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cialoVI1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./cialoVI.webp, ./cialoVI1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_cialo_vi">CIAŁO VI</div>
+                    <div data-lang="info_cialo_vi">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="cialoV-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./cialoV.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cialoV1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./cialoV.webp, ./cialoV1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_cialo_v">CIAŁO V</div>
+                    <div data-lang="info_cialo_v">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="cialoIV-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./cialoIV.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cialoIV1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./cialoIV.webp, ./cialoIV1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_cialo_iv">CIAŁO IV</div>
+                    <div data-lang="info_cialo_iv">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="cialoIII-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./cialoIII.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cialoIII1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./cialoIII.webp, ./cialoIII1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_cialo_iii">CIAŁO III</div>
+                    <div data-lang="info_cialo_iii">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="cialoII-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./cialoII.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./cialoII1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./cialoII.webp, ./cialoII1.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_cialo_ii">CIAŁO II</div>
+                    <div data-lang="info_cialo_ii">30x30 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="dekompozycja-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./dekompozycja.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./dekompozycja.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_dekompozycja">DEKOMPOZYCJA</div>
+                    <div data-lang="info_dekompozycja">90x50 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="mid-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./mid.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./mid1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./mid2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./mid3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./mid4.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./mid.webp, ./mid1.webp, ./mid2.webp, ./mid3.webp, ./mid4.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_polnoc">PÓŁNOC</div>
+                    <div data-lang="info_polnoc">40x40 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="narcyz-card" data-year="2022">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./narcyz.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./narcyz1.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./narcyz2.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <img src="./narcyz3.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <img src="./narcyz4.webp" class="slide-img active" onclick="openLightbox(this)" loading="lazy">
+                    <div class="hidden-gallery-list" data-gallery="./narcyz.webp, ./narcyz1.webp, ./narcyz2.webp, ./narcyz3.webp, ./narcyz4.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_narcyz">NARCYZ</div>
+                    <div data-lang="info_narcyz">50x70 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="fantasmagoria-card" data-year="2021">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./fantasmagoria.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./fantasmagoria.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_fantasmagoria">FANTASMAGORIA</div>
+                    <div data-lang="info_fantasmagoria">40x60 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="adam-card" data-year="2021">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./adam.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./adam.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_adam">ADAM</div>
+                    <div data-lang="info_adam">100x70 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="marsjasz-card" data-year="2021">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./marsjasz.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./marsjasz.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_marsjasz">MARSJASZ</div>
+                    <div data-lang="info_marsjasz">80x80 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="bezglowy-card" data-year="2021">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./bezglowy.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./bezglowy.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_bezglowy">BEZGŁOWY</div>
+                    <div data-lang="info_bezglowy">50x70 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="kolos-card" data-year="2021">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./kolos.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./kolos.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_kolos">KOLOS</div>
+                    <div data-lang="info_kolos">50x70 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+            <div class="art-card slider-card" id="bb-card" data-year="2021">
+                <div class="slider-container">
+                    <button class="slider-arrow slider-arrow-prev"></button>
+                    <button class="slider-arrow slider-arrow-next"></button>
+                    <img src="./bb.webp" class="slide-img active" onclick="openLightbox(this)">
+                    <div class="hidden-gallery-list" data-gallery="./bb.webp"></div>
+                </div>
+                <div class="art-card-info">
+                    <div data-lang="title_niebieskie_odrodzenie">NIEBIESKIE ODRODZENIE</div>
+                    <div data-lang="info_niebieskie_odrodzenie">40x50 cm, olej na płótnie</div>
+                </div>
+            </div>
+
+        </div>
+        
+        <footer class="site-footer">
+            &copy; 2025 Krzysztof Stępniewski. <span data-lang="footer_rights">Wszelkie prawa zastrzeżone</span>.
+        </footer>
+    </section>
+
+    <section class="about-section" id="aboutSection">
+        <div class="about-container">
+            <div class="about-img-wrapper">
+                <img src="./ja.webp" alt="Krzysztof Stępniewski" class="about-img">
+            </div>
+            <div class="about-text-content">
+                <p data-lang="about_p1">
+                    Krzysztof Stępniewski (ur. 1993) – artysta wizualny mieszkający i&nbsp;tworzący w&nbsp;Warszawie, specjalizujący się w&nbsp;malarstwie. Absolwent Wydziału Grafiki Akademii Sztuk Pięknych w&nbsp;Warszawie.
+                </p>
+                <p data-lang="about_p2">
+                    Jego twórczość wpisuje się w&nbsp;nurt współczesnego realizmu. W&nbsp;swoich pracach koncentruje się na&nbsp;cielesności rozumianej jako nośnik napięcia emocjonalnego, psychicznej ekspozycji oraz symbolu kulturowych oczekiwań.
+                </p>
+                <p data-lang="about_p3">
+                    Jego obrazy prezentowane na&nbsp;wystawach w&nbsp;Polsce oraz za&nbsp;granicą, znajdują się głównie w&nbsp;kolekcjach prywatnych.
+                </p>
+            </div>
+        </div>
+
+        <footer class="site-footer">
+            &copy; 2025 Krzysztof Stępniewski. <span data-lang="footer_rights">Wszelkie prawa zastrzeżone</span>.
+        </footer>
+    </section>
+
+    <section class="contact-section" id="contactSection">
+        
+        <h2 style="font-weight: 500; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px; color: #000000;" data-lang="contact_title">formy kontaktu</h2>
+
+        <div class="contact-top-info">
+            <a href="tel:+48664677514" class="phone-link">+48 664 677 514</a>
+            
+            <a href="https://www.instagram.com/stepniewski__/" target="_blank" class="insta-btn">INSTAGRAM</a>
+        </div>
+
+        <p style="opacity: 0.7; max-width: 400px; line-height: 1.6; margin: 0 auto 30px auto; color: #000000;" data-lang="contact_msg_label">
+            Napisz wiadomość:
+        </p>
+
+        <form action="https://formspree.io/f/xovgrnzn" method="POST" class="contact-form">
+            
+            <input type="text" id="inputName" name="name" placeholder="Twoje Imię" class="form-input" required>
+            <input type="email" id="inputEmail" name="email" placeholder="Twój Email" class="form-input" required>
+            <textarea id="inputMsg" name="message" placeholder="Treść wiadomości..." class="form-textarea" required></textarea>
+            <button type="submit" class="send-btn" data-lang="btn_send">WYŚLIJ WIADOMOŚĆ</button>
+        </form>
+
+        <div id="successMessage" class="success-message">
+            Dziękuję za wiadomość! Skontaktuję się z Tobą wkrótce.
+        </div>
+
+        <footer class="site-footer">
+            &copy; 2025 Krzysztof Stępniewski. <span data-lang="footer_rights">Wszelkie prawa zastrzeżone</span>.
+        </footer>
+    </section>
+
+    <div class="lightbox" id="lightbox">
+        <div class="lb-close" onclick="closeLightbox()">✕</div>
+        
+        <button class="lb-arrow lb-prev" onclick="changeLbSlide(-1)">&#10094;</button>
+        <button class="lb-arrow lb-next" onclick="changeLbSlide(1)">&#10095;</button>
+
+        <div class="lightbox-content">
+            <div class="lb-nav-zone prev-zone" onclick="changeLbSlide(-1)"></div>
+            <div class="lb-nav-zone next-zone" onclick="changeLbSlide(1)"></div>
+            
+            <img src="" class="lightbox-img" id="lbImage">
+        </div>
+        <div class="lb-indicators" id="lbIndicators"></div>
+    </div>
+
+    <script>
+        const heroSection = document.getElementById('heroSection');
+        const heroTitle = document.getElementById('heroTitle');
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mainMenu = document.getElementById('mainMenu');
+        
+        const collectionSection = document.getElementById('collection2025');
+        const aboutSection = document.getElementById('aboutSection'); 
+        const contactSection = document.getElementById('contactSection');
+        
+        const galleryHeader = document.getElementById('galleryHeader');
+        const aboutHeader = document.getElementById('aboutHeader'); 
+        const contactHeader = document.getElementById('contactHeader');
+
+        // ZMIENNE STANU DLA FILTRÓW
+        let currentYear = '2025';
+        let currentFilterStatus = 'all'; 
+
+        // --- NAWIGACJA ---
+        function toggleMenu(open) {
+            mainMenu.classList.toggle('active', open);
+            heroTitle.classList.toggle('faded-out', open);
+            hamburgerBtn.classList.toggle('hide', open);
+        }
+
+        // FUNKCJA POMOCNICZA DO PŁYNNEGO PRZEŁĄCZANIA SEKCJI
+        function switchSection(targetSection, targetHeader) {
+            toggleMenu(false);
+            heroSection.classList.add('hidden-completely');
+            
+            // 1. Schowaj wszystkie sekcje
+            const allSections = [collectionSection, aboutSection, contactSection];
+            allSections.forEach(sec => {
+                sec.classList.remove('active');
+                sec.classList.remove('premium-fade-in'); // Reset animacji wejścia sekcji
+            });
+
+            // 2. Schowaj wszystkie nagłówki
+            const allHeaders = [galleryHeader, aboutHeader, contactHeader];
+            allHeaders.forEach(head => head.classList.remove('visible'));
+
+            // 3. Pokaż docelową sekcję
+            targetSection.classList.add('active');
+            
+            // 4. Ustaw tło 
+            document.body.style.backgroundColor = '#F2F4F8';
+
+            // 5. Scroll na górę
+            window.scrollTo(0, 0);
+
+            // 6. Odpal animację wejścia z minimalnym opóźnieniem
+            setTimeout(() => {
+                targetSection.classList.add('premium-fade-in');
+                if(targetHeader) targetHeader.classList.add('visible');
+            }, 10);
+        }
+
+        // Pokaż OBRAZY
+        function showCollection() {
+            switchSection(collectionSection, galleryHeader);
+            
+            currentYear = '2025';
+            filterArt('all');
+            selectYear('2025');
+
+            document.querySelectorAll('.slider-card').forEach(card => {
+                card.dataset.slideIndex = 0;
+                const slides = card.querySelectorAll('.slide-img');
+                slides.forEach((slide, index) => {
+                    slide.classList.toggle('active', index === 0);
+                });
+            });
+            setupAllSliders();
+        }
+
+        // Pokaż O MNIE 
+        function showAbout() {
+            switchSection(aboutSection, aboutHeader);
+        }
+
+        // Pokaż KONTAKT
+        function showContact() {
+            switchSection(contactSection, contactHeader);
+        }
+
+        // Powrót do MENU
+        function goBackToMenu() {
+            heroTitle.style.transition = 'none';
+            heroTitle.style.opacity = '0';
+
+            toggleMenu(true);
+
+            // Ukrywamy sekcje i usuwamy animacje
+            [collectionSection, aboutSection, contactSection].forEach(sec => {
+                sec.classList.remove('active', 'premium-fade-in');
+            });
+            
+            [galleryHeader, aboutHeader, contactHeader].forEach(head => {
+                head.classList.remove('visible');
+            });
+            
+            document.body.style.backgroundColor = '#0a0a0a';
+            heroSection.classList.remove('hidden-completely');
+
+            setTimeout(() => {
+                heroTitle.style.transition = '';
+                heroTitle.style.opacity = ''; 
+            }, 50);
+        }
+
+        // --- OBSŁUGA FORMULARZA ---
+        const contactForm = document.getElementById('contactForm');
+        const successMessage = document.getElementById('successMessage');
+
+        // Netlify sam obsługuje formularz, ale jeśli chcesz użyć AJAX (żeby strona się nie przeładowała):
+        contactForm.addEventListener('submit', (e) => {
+            // Kod usunięty, żeby nie blokować standardowego wysyłania Netlify
+            // Jeśli chcesz standardowe przeładowanie do strony sukcesu Netlify - zostaw formularz bez JS
+            // Jeśli chcesz "po cichu" bez przeładowania, odkomentuj i użyj Fetch, ale standard jest pewniejszy.
+        });
+
+        // --- FILTROWANIE (ROK I DOSTĘPNOŚĆ) + NOWA ANIMACJA ---
+        
+        function applyFilters() {
+            const cards = document.querySelectorAll('.art-card');
+            
+            let visibleDelay = 0; // Licznik do opóźnienia animacji
+
+            cards.forEach(card => {
+                const cardYear = card.getAttribute('data-year');
+                const isAvailable = card.getAttribute('data-available') === 'true';
+                
+                const yearMatch = (cardYear === currentYear);
+                
+                let statusMatch = true;
+                if (currentFilterStatus === 'available') {
+                    statusMatch = isAvailable;
+                }
+
+                if (yearMatch && statusMatch) {
+                    card.classList.remove('hidden-card');
+                    
+                    // --- LOGIKA ANIMACJI PREMIUM ---
+                    // 1. Usuwamy klasę animacji, żeby ją zresetować
+                    card.classList.remove('filter-anim');
+                    
+                    // 2. Wymuszamy "Reflow" (przeliczenie stylu przez przeglądarkę),
+                    //    dzięki temu usunięcie i ponowne dodanie klasy zadziała jako nowa animacja.
+                    void card.offsetWidth; 
+                    
+                    // 3. Dodajemy klasę animacji
+                    card.classList.add('filter-anim');
+                    
+                    // 4. Ustawiamy opóźnienie, żeby karty wjeżdżały jedna po drugiej (kaskada)
+                    //    Każda kolejna widoczna karta dostaje o 0.05s większe opóźnienie
+                    card.style.animationDelay = `${visibleDelay * 0.05}s`;
+                    visibleDelay++;
+
+                } else {
+                    card.classList.add('hidden-card');
+                    card.classList.remove('filter-anim'); // Czyścimy animację dla ukrytych
+                    card.style.animationDelay = '0s';
+                }
+            });
+        }
+
+        function filterArt(status) {
+            currentFilterStatus = status;
+            
+            const btnAll = document.getElementById('btnAll');
+            const btnAvailable = document.getElementById('btnAvailable');
+            
+            if (status === 'all') {
+                btnAll.classList.add('active');
+                btnAvailable.classList.remove('active');
+            } else {
+                btnAll.classList.remove('active');
+                btnAvailable.classList.add('active');
+            }
+            
+            applyFilters();
+        }
+
+        function toggleYearDropdown() {
+            document.getElementById('yearDropdown').classList.toggle('open');
+        }
+
+        document.addEventListener('click', function(event) {
+            const container = document.querySelector('.year-dropdown-container');
+            if (container && !container.contains(event.target)) {
+                document.getElementById('yearDropdown').classList.remove('open');
+            }
+        });
+
+        function selectYear(year) {
+            currentYear = year;
+            document.getElementById('currentYearDisplay').innerText = year;
+            document.getElementById('yearDropdown').classList.remove('open');
+            document.querySelectorAll('.year-option').forEach(opt => {
+                opt.classList.toggle('selected', opt.innerText === year);
+            });
+
+            applyFilters();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- SCROLL LOGIC ---
+        window.addEventListener('scroll', () => {});
+
+        // =========================================
+        // SLIDER (Swipe + Niewidoczne krawędzie) I LIGHTBOX
+        // =========================================
+
+        function addSwipeSupport(element, onNext, onPrev) {
+            let touchStartX = 0;
+            let touchEndX = 0;
+            const minSwipeDistance = 50; 
+
+            element.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            element.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, {passive: true});
+
+            function handleSwipe() {
+                const distance = touchStartX - touchEndX;
+                if (Math.abs(distance) > minSwipeDistance) {
+                    if (distance > 0) {
+                        onNext(); 
+                    } else {
+                        onPrev(); 
+                    }
+                }
+            }
+        }
+
+        function setupAllSliders() {
+            document.querySelectorAll('.slider-card').forEach(card => {
+                if (!card.dataset.slideIndex) card.dataset.slideIndex = 0;
+                
+                const container = card.querySelector('.slider-container');
+                const slides = card.querySelectorAll('.slide-img');
+                const prevBtn = card.querySelector('.slider-arrow-prev'); 
+                const nextBtn = card.querySelector('.slider-arrow-next'); 
+                
+                if (slides.length === 0) return;
+
+                const updateCardSlide = () => {
+                    const idx = parseInt(card.dataset.slideIndex);
+                    slides.forEach((slide, i) => slide.classList.toggle('active', i === idx));
+                };
+
+                const goNext = () => {
+                    let idx = parseInt(card.dataset.slideIndex);
+                    idx = (idx + 1) % slides.length; 
+                    card.dataset.slideIndex = idx; 
+                    updateCardSlide();
+                };
+
+                const goPrev = () => {
+                    let idx = parseInt(card.dataset.slideIndex);
+                    idx = (idx - 1 + slides.length) % slides.length; 
+                    card.dataset.slideIndex = idx; 
+                    updateCardSlide();
+                };
+
+                prevBtn.onclick = (e) => { e.stopPropagation(); goPrev(); };
+                nextBtn.onclick = (e) => { e.stopPropagation(); goNext(); };
+
+                addSwipeSupport(container, goNext, goPrev);
+            });
+        }
+
+        const lightbox = document.getElementById('lightbox');
+        const lbImage = document.getElementById('lbImage');
+        const lbIndicators = document.getElementById('lbIndicators');
+        let lbGallery = []; let lbCurrentIndex = 0; let activeCard = null; 
+
+        addSwipeSupport(lightbox, () => changeLbSlide(1), () => changeLbSlide(-1));
+
+        function openLightbox(clickedImg) {
+            const card = clickedImg.closest('.art-card');
+            if (!card) return; 
+            
+            if (card.classList.contains('slider-card')) {
+                activeCard = card;
+            }
+
+            const galleryListDiv = card.querySelector('.hidden-gallery-list');
+            if (!galleryListDiv) {
+                lbGallery = [clickedImg.src];
+                lbCurrentIndex = 0;
+            } else {
+                const galleryData = galleryListDiv.dataset.gallery;
+                lbGallery = galleryData.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                
+                const clickedSrc = clickedImg.getAttribute('src');
+                let matchIndex = lbGallery.findIndex(url => url.includes(clickedSrc.split('/').pop()));
+                if (matchIndex === -1) matchIndex = 0;
+                lbCurrentIndex = matchIndex;
+            }
+
+            createIndicators();
+
+            loadLbImage(lbCurrentIndex);
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function createIndicators() {
+            lbIndicators.innerHTML = '';
+            if (lbGallery.length > 1) {
+                lbGallery.forEach((_, index) => {
+                    const dash = document.createElement('div');
+                    dash.classList.add('lb-dash');
+                    if (index === lbCurrentIndex) dash.classList.add('active');
+                    lbIndicators.appendChild(dash);
+                });
+            }
+        }
+
+        function updateIndicators(index) {
+            const dashes = lbIndicators.querySelectorAll('.lb-dash');
+            dashes.forEach((dash, i) => {
+                if (i === index) dash.classList.add('active');
+                else dash.classList.remove('active');
+            });
+        }
+
+        function loadLbImage(index) {
+            lbImage.classList.remove('loaded');
+            
+            const newImg = new Image(); newImg.src = lbGallery[index];
+            newImg.onload = () => { 
+                lbImage.src = newImg.src; 
+                lbImage.classList.add('loaded'); 
+                
+                let nextIndex = index + 1;
+                if (nextIndex >= lbGallery.length) nextIndex = 0;
+                new Image().src = lbGallery[nextIndex];
+
+                let prevIndex = index - 1;
+                if (prevIndex < 0) prevIndex = lbGallery.length - 1;
+                new Image().src = lbGallery[prevIndex];
+            };
+            
+            lbCurrentIndex = index;
+            updateIndicators(index);
+        }
+
+        function changeLbSlide(direction) {
+            if (event) event.stopPropagation();
+            let newIndex = lbCurrentIndex + direction;
+            if (newIndex < 0) newIndex = lbGallery.length - 1;
+            if (newIndex >= lbGallery.length) newIndex = 0;
+            loadLbImage(newIndex);
+        }
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+            setTimeout(() => lbImage.src = '', 300);
+            
+            if (activeCard) {
+                activeCard.dataset.slideIndex = 0;
+                const slides = activeCard.querySelectorAll('.slide-img');
+                slides.forEach((slide, index) => { slide.classList.toggle('active', index === 0); });
+                activeCard = null;
+            }
+        }
+
+        lightbox.addEventListener('click', (e) => { if (e.target === lightbox || e.target.classList.contains('lightbox-content')) closeLightbox(); });
+        document.addEventListener('keydown', (e) => { if (!lightbox.classList.contains('active')) return; if (e.key === 'Escape') closeLightbox(); if (e.key === 'ArrowLeft') changeLbSlide(-1); if (e.key === 'ArrowRight') changeLbSlide(1); });
+
+        // =========================================
+        // SYSTEM JĘZYKOWY (PL / ENG)
+        // =========================================
+
+        const translations = {
+            pl: {
+                menu_paintings: "OBRAZY",
+                menu_about: "BIO",
+                menu_contact: "KONTAKT",
+                back_menu: "← MENU",
+                filter_all: "WSZYSTKIE",
+                filter_available: "DOSTĘPNE",
+                
+                title_doll: "LALKA",
+                info_doll: "30x40 cm, olej na płótnie",
+                title_coldhands: "Zimne ręce",
+                info_coldhands: "50x70 cm, olej na płótnie",
+                title_portrait_xx: "PORTRET XX",
+                info_portrait_xx: "30x30 cm, olej na płótnie",
+                title_body_xvii: "CIAŁO XVII",
+                info_body_xvii: "30x40 cm, olej na płótnie",
+                title_portrait_xix: "PORTRET XIX",
+                info_portrait_xix: "30x40 cm, olej na płótnie",
+                title_body_xvi: "CIAŁO XVI",
+                info_body_xvi: "30x30 cm, olej na płótnie",
+                title_tension: "NAPIĘCIE",
+                info_tension: "40x50 cm, olej na płótnie",
+                title_portrait_xviii: "PORTRET XVIII",
+                info_portrait_xviii: "30x30 cm, olej na płótnie",
+                title_portrait_xvii: "PORTRET XVII",
+                info_portrait_xvii: "30x30 cm, olej na płótnie",
+                title_portrait_xvi: "PORTRET XVI",
+                info_portrait_xvi: "30x30 cm, olej na płótnie",
+                title_portrait_xv: "PORTRET XV",
+                info_portrait_xv: "30x30 cm, olej na płótnie",
+                title_portrait_xiv: "PORTRET XIV",
+                info_portrait_xiv: "30x30 cm, olej na płótnie",
+                title_sunkissed: "MUŚNIĘTY SŁOŃCEM",
+                info_sunkissed: "40x60 cm, olej na płótnie",
+                title_sunset: "ZACHÓD SŁOŃCA",
+                info_sunset: "50x50 cm, olej na płótnie",
+                title_blueroom: "NIEBIESKI POKÓJ",
+                info_blueroom: "100x120 cm, olej na płótnie",
+                title_takehands: "ZABIERZ RĘCE",
+                info_takehands: "46x40 cm, olej na płótnie",
+                title_untitled_bz: "BEZ NAZWY",
+                info_untitled_bz: "30x40 cm, olej na płótnie",
+                title_portrait_xiii: "PORTRET XIII",
+                info_portrait_xiii: "30x30 cm, olej na płótnie",
+                title_lust: "ŻĄDZA",
+                info_lust: "27x35 cm, olej na płótnie",
+                title_portrait_xii: "PORTRET XII",
+                info_portrait_xii: "30x30 cm, olej na płótnie",
+                title_portrait_xi: "PORTRET XI",
+                info_portrait_xi: "30x30 cm, olej na płótnie",
+                title_portrait_x: "PORTRET X",
+                info_portrait_x: "30x30 cm, olej na płótnie",
+                title_untitled_bn: "BEZ NAZWY",
+                info_untitled_bn: "50x50 cm, olej na płótnie",
+                title_blueboy: "NIEBIESKI CHŁOPAK",
+                info_blueboy: "40x50 cm, olej na płótnie",
+                title_conversation: "ROZMOWA",
+                info_conversation: "120x100 cm, olej na płótnie",
+                title_blueeyes: "NIEBIESKIE OCZY",
+                info_blueeyes: "120x70 cm, olej na płótnie",
+                title_ultramarine: "ULTRAMARYNA I CYNOBER",
+                info_ultramarine: "120x70 cm, olej na płótnie",
+                title_untitled_c: "BEZ NAZWY",
+                info_untitled_c: "120x60 cm, olej na płótnie",
+                title_twowomen: "DWIE KOBIETY",
+                info_twowomen: "150x150 cm, olej na płótnie",
+                title_redshirt: "RED SHIRT",
+                info_redshirt: "92x65 cm, olej na płótnie",
+                title_awakening: "PRZEBUDZENIE",
+                info_awakening: "100x100 cm, olej na płótnie",
+                title_algos: "ALGOS",
+                info_algos: "100x100 cm, olej na płótnie",
+                title_dream: "SEN",
+                info_dream: "80x90 cm, olej na płótnie",
+                title_tinman: "TIN MAN",
+                info_tinman: "40x50 cm, olej na płótnie",
+                title_redhand: "RED HAND",
+                info_redhand: "60x90 cm, olej na płótnie",
+
+                // --- NOWE OBRAZY ---
+                title_czerwonareka: "CZERWONA RĘKA",
+                info_czerwonareka: "60x90 cm, olej na płótnie",
+                title_spetryfikowany: "SPETRYFIKOWANY",
+                info_spetryfikowany: "90x80 cm, olej na płótnie",
+                title_nn_2022: "BEZ NAZWY",
+                info_nn_2022: "80x90 cm, olej na płótnie",
+                
+                title_cialo_xii: "CIAŁO XII",
+                info_cialo_xii: "20x20 cm, olej na płótnie",
+                title_cialo_xi: "CIAŁO XI",
+                info_cialo_xi: "20x20 cm, olej na płótnie",
+                title_cialo_ix: "CIAŁO IX",
+                info_cialo_ix: "25x25 cm, olej na płótnie",
+                title_cialo_viii: "CIAŁO VIII",
+                info_cialo_viii: "25x25 cm, olej na płótnie",
+                title_cialo_vii: "CIAŁO VII",
+                info_cialo_vii: "25x25 cm, olej na płótnie",
+                title_cialo_vi: "CIAŁO VI",
+                info_cialo_vi: "30x30 cm, olej na płótnie",
+                title_cialo_v: "CIAŁO V",
+                info_cialo_v: "30x30 cm, olej na płótnie",
+                title_cialo_iv: "CIAŁO IV",
+                info_cialo_iv: "30x30 cm, olej na płótnie",
+                title_cialo_iii: "CIAŁO III",
+                info_cialo_iii: "30x30 cm, olej na płótnie",
+                title_cialo_ii: "CIAŁO II",
+                info_cialo_ii: "30x30 cm, olej na płótnie",
+
+                title_dekompozycja: "DEKOMPOZYCJA",
+                info_dekompozycja: "90x50 cm, olej na płótnie",
+                title_polnoc: "PÓŁNOC",
+                info_polnoc: "40x40 cm, olej na płótnie",
+                title_narcyz: "NARCYZ",
+                info_narcyz: "50x70 cm, olej na płótnie",
+                title_fantasmagoria: "FANTASMAGORIA",
+                info_fantasmagoria: "40x60 cm, olej na płótnie",
+                title_adam: "ADAM",
+                info_adam: "100x70 cm, olej na płótnie",
+                title_marsjasz: "MARSJASZ",
+                info_marsjasz: "80x80 cm, olej na płótnie",
+                title_bezglowy: "BEZGŁOWY",
+                info_bezglowy: "50x70 cm, olej na płótnie",
+                title_kolos: "KOLOS",
+                info_kolos: "50x70 cm, olej na płótnie",
+                title_niebieskie_odrodzenie: "NIEBIESKIE ODRODZENIE",
+                info_niebieskie_odrodzenie: "40x50 cm, olej na płótnie",
+                
+                btn_write_me: "NAPISZ DO MNIE",
+                
+                about_p1: "Krzysztof Stępniewski (ur. 1993) – artysta wizualny mieszkający i tworzący w Warszawie, specjalizujący się w malarstwie. Absolwent Wydziału Grafiki Akademii Sztuk Pięknych w Warszawie.",
+                about_p2: "Jego twórczość wpisuje się w nurt współczesnego realizmu. W swoich pracach koncentruje się na cielesności rozumianej jako nośnik napięcia emocjonalnego, psychicznej ekspozycji oraz symbolu kulturowych oczekiwań.",
+                about_p3: "Jego obrazy prezentowane na wystawach w Polsce oraz za granicą, znajdują się głównie w kolekcjach prywatnych.",
+
+                contact_title: "formy kontaktu",
+                contact_msg_label: "Napisz wiadomość:",
+                
+                input_name_ph: "Twoje Imię",
+                input_email_ph: "Twój Email",
+                input_msg_ph: "Treść wiadomości...",
+                btn_send: "WYŚLIJ WIADOMOŚĆ",
+
+                footer_rights: "Wszelkie prawa zastrzeżone"
+            },
+            en: {
+                menu_paintings: "PAINTINGS",
+                menu_about: "BIO",
+                menu_contact: "CONTACT",
+                back_menu: "← MENU",
+                filter_all: "ALL",
+                filter_available: "AVAILABLE",
+
+                title_doll: "DOLL",
+                info_doll: "30x40 cm, oil on canvas",
+                title_coldhands: "COLD HANDS",
+                info_coldhands: "50x70 cm, oil on canvas",
+                title_portrait_xx: "PORTRAIT XX",
+                info_portrait_xx: "30x30 cm, oil on canvas",
+                title_body_xvii: "BODY XVII",
+                info_body_xvii: "30x40 cm, oil on canvas",
+                title_portrait_xix: "PORTRAIT XIX",
+                info_portrait_xix: "30x40 cm, oil on canvas",
+                title_body_xvi: "BODY XVI",
+                info_body_xvi: "30x30 cm, oil on canvas",
+                title_tension: "TENSION",
+                info_tension: "40x50 cm, oil on canvas",
+                title_portrait_xviii: "PORTRAIT XVIII",
+                info_portrait_xviii: "30x30 cm, oil on canvas",
+                title_portrait_xvii: "PORTRAIT XVII",
+                info_portrait_xvii: "30x30 cm, oil on canvas",
+                title_portrait_xvi: "PORTRAIT XVI",
+                info_portrait_xvi: "30x30 cm, oil on canvas",
+                title_portrait_xv: "PORTRAIT XV",
+                info_portrait_xv: "30x30 cm, oil on canvas",
+                title_portrait_xiv: "PORTRAIT XIV",
+                info_portrait_xiv: "30x30 cm, oil on canvas",
+                title_sunkissed: "SUNKISSED",
+                info_sunkissed: "40x60 cm, oil on canvas",
+                title_sunset: "SUNSET",
+                info_sunset: "50x50 cm, oil on canvas",
+                title_blueroom: "BLUE ROOM",
+                info_blueroom: "100x120 cm, oil on canvas",
+                title_takehands: "TAKE YOUR HANDS",
+                info_takehands: "46x40 cm, oil on canvas",
+                title_untitled_bz: "UNTITLED",
+                info_untitled_bz: "30x40 cm, oil on canvas",
+                title_portrait_xiii: "PORTRAIT XIII",
+                info_portrait_xiii: "30x30 cm, oil on canvas",
+                title_lust: "LUST",
+                info_lust: "27x35 cm, oil on canvas",
+                title_portrait_xii: "PORTRAIT XII",
+                info_portrait_xii: "30x30 cm, oil on canvas",
+                title_portrait_xi: "PORTRAIT XI",
+                info_portrait_xi: "30x30 cm, oil on canvas",
+                title_portrait_x: "PORTRAIT X",
+                info_portrait_x: "30x30 cm, oil on canvas",
+                title_untitled_bn: "UNTITLED",
+                info_untitled_bn: "50x50 cm, oil on canvas",
+                title_blueboy: "BLUE BOY",
+                info_blueboy: "40x50 cm, oil on canvas",
+                title_conversation: "TALK",
+                info_conversation: "120x100 cm, oil on canvas",
+                title_blueeyes: "BLUE EYES",
+                info_blueeyes: "120x70 cm, oil on canvas",
+                title_ultramarine: "ULTRAMARINE AND VERMILION",
+                info_ultramarine: "120x70 cm, oil on canvas",
+                title_untitled_c: "UNTITLED",
+                info_untitled_c: "120x60 cm, oil on canvas",
+                title_twowomen: "TWO WOMEN",
+                info_twowomen: "150x150 cm, oil on canvas",
+                title_redshirt: "RED SHIRT",
+                info_redshirt: "92x65 cm, oil on canvas",
+                title_awakening: "AWAKENING",
+                info_awakening: "100x100 cm, oil on canvas",
+                title_algos: "ALGOS",
+                info_algos: "100x100 cm, oil on canvas",
+                title_dream: "DREAM",
+                info_dream: "80x90 cm, oil on canvas",
+                title_tinman: "TIN MAN",
+                info_tinman: "40x50 cm, oil on canvas",
+                title_redhand: "RED HAND",
+                info_redhand: "60x90 cm, oil on canvas",
+
+                // --- NEW PAINTINGS ---
+                title_czerwonareka: "RED HAND",
+                info_czerwonareka: "60x90 cm, oil on canvas",
+                title_spetryfikowany: "PETRIFIED",
+                info_spetryfikowany: "90x80 cm, oil on canvas",
+                title_nn_2022: "UNTITLED",
+                info_nn_2022: "80x90 cm, oil on canvas",
+
+                title_cialo_xii: "BODY XII",
+                info_cialo_xii: "20x20 cm, oil on canvas",
+                title_cialo_xi: "BODY XI",
+                info_cialo_xi: "20x20 cm, oil on canvas",
+                title_cialo_ix: "BODY IX",
+                info_cialo_ix: "25x25 cm, oil on canvas",
+                title_cialo_viii: "BODY VIII",
+                info_cialo_viii: "25x25 cm, oil on canvas",
+                title_cialo_vii: "BODY VII",
+                info_cialo_vii: "25x25 cm, oil on canvas",
+                title_cialo_vi: "BODY VI",
+                info_cialo_vi: "30x30 cm, oil on canvas",
+                title_cialo_v: "BODY V",
+                info_cialo_v: "30x30 cm, oil on canvas",
+                title_cialo_iv: "BODY IV",
+                info_cialo_iv: "30x30 cm, oil on canvas",
+                title_cialo_iii: "BODY III",
+                info_cialo_iii: "30x30 cm, oil on canvas",
+                title_cialo_ii: "BODY II",
+                info_cialo_ii: "30x30 cm, oil on canvas",
+
+                title_dekompozycja: "DECOMPOSITION",
+                info_dekompozycja: "90x50 cm, oil on canvas",
+                title_polnoc: "MIDNIGHT",
+                info_polnoc: "40x40 cm, oil on canvas",
+                title_narcyz: "NARCISSUS",
+                info_narcyz: "50x70 cm, oil on canvas",
+                title_fantasmagoria: "PHANTASMAGORIA",
+                info_fantasmagoria: "40x60 cm, oil on canvas",
+                title_adam: "ADAM",
+                info_adam: "100x70 cm, oil on canvas",
+                title_marsjasz: "MARSYAS",
+                info_marsjasz: "80x80 cm, oil on canvas",
+                title_bezglowy: "HEADLESS",
+                info_bezglowy: "50x70 cm, oil on canvas",
+                title_kolos: "COLOSSUS",
+                info_kolos: "50x70 cm, oil on canvas",
+                title_niebieskie_odrodzenie: "BLUE REVIVAL",
+                info_niebieskie_odrodzenie: "40x50 cm, oil on canvas",
+
+                btn_write_me: "WRITE TO ME",
+                
+                about_p1: "Krzysztof Stępniewski (b. 1993) is a visual artist based in Warsaw, specializing in painting. He is a graduate of the Faculty of Graphic Arts at the Academy of Fine Arts in Warsaw.",
+                about_p2: "His work falls within the current of contemporary realism. In his works, he focuses on corporeality understood as a vehicle for emotional tension, psychological exposure, and a symbol of cultural expectations.",
+                about_p3: "His paintings, presented at exhibitions in Poland and abroad, are mainly found in private collections.",
+
+                contact_title: "Forms of contact",
+                contact_msg_label: "Send a message:",
+                
+                input_name_ph: "Your Name",
+                input_email_ph: "Your Email",
+                input_msg_ph: "Message content...",
+                btn_send: "SEND MESSAGE",
+
+                footer_rights: "All Rights Reserved"
+            }
+        };
+
+        function setLanguage(lang) {
+            const buttons = document.querySelectorAll('.lang-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText.toLowerCase() === (lang === 'pl' ? 'pl' : 'eng')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            const elements = document.querySelectorAll('[data-lang]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-lang');
+                if (translations[lang][key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = translations[lang][key];
+                    } else {
+                        el.innerText = translations[lang][key];
+                    }
+                }
+            });
+
+            const nameInput = document.getElementById('inputName');
+            const emailInput = document.getElementById('inputEmail');
+            const msgInput = document.getElementById('inputMsg');
+            
+            if(nameInput && translations[lang].input_name_ph) nameInput.placeholder = translations[lang].input_name_ph;
+            if(emailInput && translations[lang].input_email_ph) emailInput.placeholder = translations[lang].input_email_ph;
+            if(msgInput && translations[lang].input_msg_ph) msgInput.placeholder = translations[lang].input_msg_ph;
+        }
+    </script>
+
+</body>
+</html>

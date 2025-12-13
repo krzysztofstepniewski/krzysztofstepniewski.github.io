@@ -315,16 +315,27 @@
         }
 
         .about-text-content {
-            text-align: justify; font-size: 16px; line-height: 1.8; color: var(--text-dark);
+            text-align: justify;       /* Wyrównanie do obu krawędzi */
+            hyphens: auto;             /* Automatyczne dzielenie wyrazów z myślnikiem */
+            -webkit-hyphens: auto;     /* Wsparcie dla Safari/iOS */
+            -ms-hyphens: auto;         /* Wsparcie dla starszych przeglądarek */
+            
+            font-size: 16px; 
+            line-height: 1.8; 
+            color: var(--text-dark);
         }
         .about-text-content p { margin-bottom: 20px; opacity: 0.9; }
 
         /* =========================================
-           6. LIGHTBOX
+           6. LIGHTBOX (POPRAWIONY - BIAŁE TŁO NA MOBILE)
            ========================================= */
         .lightbox { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); z-index: 1000; display: none; 
+            
+            /* DOMYŚLNIE (TELEFON): Białe tło */
+            background: #ffffff; 
+            
+            z-index: 1000; display: none; 
             justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s ease;
             touch-action: none; overscroll-behavior: contain;
         }
@@ -338,70 +349,70 @@
 
         .lightbox-img { 
             width: 100%; height: 100%; object-fit: contain; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2); /* Delikatniejszy cień na białym tle */
             opacity: 0; transition: opacity 0.4s ease-in-out; 
             display: block;
         }
         .lightbox-img.loaded { opacity: 1; }
 
-        /* --- STREFY KLIKNIĘCIA NA ZDJĘCIU --- */
+        /* --- STREFY KLIKNIĘCIA NA ZDJĘCIU (NIEWIDOCZNE) --- */
         .lb-nav-zone {
-            position: absolute;
-            top: 0; bottom: 0;
-            width: 50%;
-            height: 100%;
-            z-index: 1025;
-            background: transparent;
-            cursor: pointer;
+            position: absolute; top: 0; bottom: 0; width: 50%; height: 100%;
+            z-index: 1025; background: transparent; cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
         .prev-zone { left: 0; cursor: w-resize; }
         .next-zone { right: 0; cursor: e-resize; }
         
-        /* Strzałki ZEWNĘTRZNE w Lightboxie - DOMYŚLNIE UKRYTE (Mobile First) */
+        /* --- STRZAŁKI (NAPRAWA WYGLĄDU) --- */
         .lb-arrow { 
-            display: none; 
+            display: none; /* Domyślnie ukryte na telefonie */
             position: absolute; 
             top: 50%; 
             transform: translateY(-50%); 
-            width: auto; 
-            height: auto; 
+            width: auto; height: auto; 
+            
+            /* KLUCZOWE NAPRAWY: */
             background: transparent; 
             border: none; 
-            cursor: pointer; 
-            z-index: 1030; 
-            outline: none; 
+            outline: none;
             
-            color: rgba(255, 255, 255, 0.6);
-            font-family: 'Montserrat', sans-serif; 
-            font-weight: 200; 
-            font-size: 60px; 
-            padding: 20px; 
+            cursor: pointer; z-index: 1030; 
+            font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 60px; padding: 20px; 
             transition: color 0.3s ease, opacity 0.3s ease, transform 0.2s;
+            
+            /* DOMYŚLNY KOLOR (TELEFON - JEŚLI SIĘ WŁĄCZĄ): */
+            color: var(--text-dark);
         }
+
+        /* Pozycjonowanie strzałek */
+        .lb-prev { left: 40px; } 
+        .lb-next { right: 40px; }
 
         .lb-arrow:hover { 
-            color: #ffffff; 
-            opacity: 1;
-            transform: translateY(-50%) scale(1.1); 
+            opacity: 1; transform: translateY(-50%) scale(1.1); 
         }
 
-        /* Pozycjonowanie strzałek zewnętrznych */
-        .lb-prev { left: 200px; } 
-        .lb-next { right: 200px; }
+        /* --- PRZYCISK ZAMKNIĘCIA "X" --- */
+        .lb-close { 
+            position: absolute; top: 20px; right: 30px; 
+            /* DOMYŚLNIE (TELEFON): Czarny */
+            color: var(--text-dark); 
+            font-size: 30px; cursor: pointer; z-index: 1040; font-weight: 300; transition: color 0.3s; 
+        }
 
-        .lb-close { position: absolute; top: 20px; right: 30px; color: white; font-size: 30px; cursor: pointer; z-index: 1040; font-weight: 300; transition: color 0.3s; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8)); }
-
+        /* --- KRESECZKI NA DOLE --- */
         .lb-indicators {
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
             display: flex; gap: 12px; z-index: 1020;
         }
         .lb-dash {
-            width: 30px; height: 3px; background-color: #ffffff;
+            width: 30px; height: 3px; 
+            /* DOMYŚLNIE (TELEFON): Ciemne kreski */
+            background-color: var(--text-dark);
             opacity: 0.3; border-radius: 2px; transition: opacity 0.3s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
-        .lb-dash.active { opacity: 1; box-shadow: 0 0 5px rgba(255,255,255,0.8); }
+        .lb-dash.active { opacity: 1; }
 
         /* --- STOPKA (FOOTER) --- */
         .site-footer {
@@ -543,7 +554,31 @@
             .form-input, .form-textarea, .send-btn {
                 font-size: 14px;
             }
-        }
+            /* --- PRZYWRACANIE CIEMNEGO LIGHTBOXA NA PC --- */
+            .lightbox {
+                background: rgba(0,0,0,0.85); /* Ciemne tło */
+            }
+            .lightbox-img {
+                box-shadow: 0 10px 40px rgba(0,0,0,0.5); /* Mocniejszy cień */
+            }
+            .lb-close {
+                color: #ffffff; /* Biały X */
+                filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));
+            }
+            .lb-arrow {
+                display: block; /* Pokaż strzałki */
+                color: rgba(255, 255, 255, 0.6); /* Białe strzałki */
+            }
+            .lb-arrow:hover {
+                color: #ffffff;
+            }
+            .lb-dash {
+                background-color: #ffffff; /* Białe kreski */
+                box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            }
+            .lb-dash.active {
+                box-shadow: 0 0 5px rgba(255,255,255,0.8);
+            }
     </style>
 </head>
 <body>
@@ -1503,7 +1538,7 @@
             Napisz wiadomość:
         </p>
 
-        <form action="https://formspree.io/f/xovgrnzn" method="POST" class="contact-form">
+        <form id="contactForm" action="https://formspree.io/f/xovgrnzn" method="POST" class="contact-form">
             
             <input type="text" id="inputName" name="name" placeholder="Twoje Imię" class="form-input" required>
             <input type="email" id="inputEmail" name="email" placeholder="Twój Email" class="form-input" required>
@@ -2222,6 +2257,47 @@
             if(emailInput && translations[lang].input_email_ph) emailInput.placeholder = translations[lang].input_email_ph;
             if(msgInput && translations[lang].input_msg_ph) msgInput.placeholder = translations[lang].input_msg_ph;
         }
+
+        // --- NOWOCZESNA OBSŁUGA FORMULARZA (BEZ PRZEŁADOWANIA) ---
+        const form = document.getElementById("contactForm");
+        const successMsg = document.getElementById("successMessage");
+
+        async function handleSubmit(event) {
+            event.preventDefault(); // 1. ZATRZYMUJE ucieczkę na stronę Formspree
+            
+            const data = new FormData(event.target);
+            
+            // Wysyłanie w tle
+            fetch(event.target.action, {
+                method: form.method,
+                body: data,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // SUKCES!
+                    // 2. Czyścimy pola (imię, mail, treść znikają)
+                    form.reset();
+                    
+                    // 3. Pokazujemy Twój zielony komunikat
+                    successMsg.style.display = "block";
+                    
+                    // Opcjonalnie: ukryj komunikat po 5 sekundach
+                    setTimeout(() => { successMsg.style.display = "none"; }, 5000);
+                } else {
+                    alert("Coś poszło nie tak. Spróbuj ponownie.");
+                }
+            }).catch(error => {
+                alert("Wystąpił błąd połączenia.");
+            });
+        }
+        
+        // Podpięcie funkcji, jeśli formularz istnieje
+        if (form) {
+            form.addEventListener("submit", handleSubmit);
+        }
+
     </script>
 
 </body>
